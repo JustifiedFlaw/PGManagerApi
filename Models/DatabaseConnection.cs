@@ -2,10 +2,10 @@ using System;
 
 namespace PGManagerApi.Models
 {
-    public class UserDatabase
+    public class DatabaseConnection
     {
         public virtual string Username { get; set; }
-        public virtual string DatabaseName { get; set; }
+        public virtual string ConnectionName { get; set; }
 
         public virtual string ConnectionHost { get; set; }
         public virtual int ConnectionPort { get; set; }
@@ -15,11 +15,11 @@ namespace PGManagerApi.Models
 
         public override bool Equals(object obj)
         {
-            if (obj is UserDatabase)
+            if (obj is DatabaseConnection)
             {
-                var compareTo = obj as UserDatabase;
+                var compareTo = obj as DatabaseConnection;
                 return this.Username == compareTo.Username
-                    && this.DatabaseName == compareTo.DatabaseName;
+                    && this.ConnectionName == compareTo.ConnectionName;
             }
 
             return false;
@@ -27,7 +27,7 @@ namespace PGManagerApi.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.Username, this.DatabaseName);
+            return HashCode.Combine(this.Username, this.ConnectionName);
         }
     }
 }

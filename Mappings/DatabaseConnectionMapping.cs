@@ -3,15 +3,15 @@ using PGManagerApi.Models;
 
 namespace PGManagerApi.Mappings
 {
-    public class UserDatabaseMapping : ClassMap<UserDatabase>
+    public class DatabaseConnectionMapping : ClassMap<DatabaseConnection>
     {
-        public UserDatabaseMapping()
+        public DatabaseConnectionMapping()
         {
-            this.Table("userdatabases");
+            this.Table("databaseconnections");
 
             this.CompositeId()
                 .KeyProperty(x => x.Username)
-                .KeyProperty(x => x.DatabaseName);
+                .KeyProperty(x => x.ConnectionName);
 
             this.Map(x => x.ConnectionHost);
             this.Map(x => x.ConnectionPort);

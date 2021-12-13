@@ -39,9 +39,9 @@ namespace PGManagerApi
             });
 
             var databaseSettings = DatabaseSettingsFactory.Load();
-            services.AddNHibernate(databaseSettings);
-
             DatabaseMigrator.Migrate(databaseSettings);
+
+            services.AddNHibernate(databaseSettings);
 
             services
                 .AddAuthentication()
@@ -54,7 +54,7 @@ namespace PGManagerApi
 
             services.AddControllers(options =>
             {
-                options.Filters.Add<UserDatabaseNotFoundExceptionFilter>();
+                options.Filters.Add<DatabaseConnectionNotFoundExceptionFilter>();
             });
         }
 

@@ -8,45 +8,45 @@ using PGManagerApi.Models;
 
 namespace PGManagerApi.Services
 {
-    public class UserDatabaseService
+    public class DatabaseConnectionService
     {
         ISessionFactory SessionFactory;
 
-        public UserDatabaseService(ISessionFactory sessionFactory)
+        public DatabaseConnectionService(ISessionFactory sessionFactory)
         {
             this.SessionFactory = sessionFactory;
         }
 
-        public ISessionFactory GetSessionFactory(string username, string databaseName)
+        public ISessionFactory GetSessionFactory(string username, string connectionName)
         {
             using (var session = this.SessionFactory.OpenSession())
             {
-                var userDatabase = session.Query<UserDatabase>()
+                var connection = session.Query<DatabaseConnection>()
                     .Where(x => x.Username == username 
-                        && x.DatabaseName == databaseName)
+                        && x.ConnectionName == connectionName)
                     .FirstOrDefault();
                 
                 // TODO: decrypt password
 
-                if (userDatabase == null)
+                if (connection == null)
                 {
-                    throw new UserDatabaseNotFoundException(username, databaseName);
+                    throw new DatabaseConnectionNotFoundException(username, connectionName);
                 }
 
-                return CreateSessionFactory(userDatabase);
+                return CreateSessionFactory(connection);
             }
         }
 
-        private ISessionFactory CreateSessionFactory(UserDatabase userDatabase)
+        private ISessionFactory CreateSessionFactory(DatabaseConnection databaseConnection)
         {
             var nhConfiguration = Fluently.Configure();
             nhConfiguration.Database(PostgreSQLConfiguration.Standard
                 .ConnectionString(c => {
-                    c.Host(userDatabase.ConnectionHost);
-                    c.Port(userDatabase.ConnectionPort);
-                    c.Database(userDatabase.ConnectionDatabase);
-                    c.Username(userDatabase.ConnectionUsername);
-                    c.Password(userDatabase.ConnectionPassword);
+                    c.Host(databaseConnection.ConnectionHost);
+                    c.Port(databaseConnection.ConnectionPort);
+                    c.Database(databaseConnection.ConnectionDatabase);
+                    c.Username(databaseConnection.ConnectionUsername);
+                    c.Password(databaseConnection.ConnectionPassword);
                 }));
 
             nhConfiguration.Mappings(m => m.FluentMappings.AddFromAssemblyOf<TableMapping>());

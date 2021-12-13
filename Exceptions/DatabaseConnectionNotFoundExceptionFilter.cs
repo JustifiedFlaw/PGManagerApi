@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace PGManagerApi.Exceptions
 {
-    public class UserDatabaseNotFoundExceptionFilter : IActionFilter, IOrderedFilter
+    public class DatabaseConnectionNotFoundExceptionFilter : IActionFilter, IOrderedFilter
     {
         public int Order => int.MaxValue - 10;
 
@@ -12,9 +12,9 @@ namespace PGManagerApi.Exceptions
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            if (context.Exception is UserDatabaseNotFoundException userDatabaseNotFoundException)
+            if (context.Exception is DatabaseConnectionNotFoundException databaseConnectionNotFoundException)
             {
-                context.Result = new ObjectResult(userDatabaseNotFoundException.Message)
+                context.Result = new ObjectResult(databaseConnectionNotFoundException.Message)
                 {
                     StatusCode = (int)HttpStatusCode.NotFound
                 };

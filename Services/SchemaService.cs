@@ -7,16 +7,16 @@ namespace PGManagerApi.Services
 {
     public class SchemaService
     {
-        UserDatabaseService UserDatabaseService;
+        DatabaseConnectionService DatabaseConnectionService;
 
-        public SchemaService(UserDatabaseService userDatabaseService)
+        public SchemaService(DatabaseConnectionService databaseConnectionService)
         {
-            this.UserDatabaseService = userDatabaseService;
+            this.DatabaseConnectionService = databaseConnectionService;
         }
 
-        public Table[] GetTables(string username, string databaseName)
+        public Table[] GetTables(string username, string connectionName)
         {
-            var sessionFactory = this.UserDatabaseService.GetSessionFactory(username, databaseName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
 
             using (var session = sessionFactory.OpenSession())
             {
@@ -24,9 +24,9 @@ namespace PGManagerApi.Services
             }
         }
 
-        public IEnumerable<Column> GetColumns(string username, string databaseName, Table table)
+        public IEnumerable<Column> GetColumns(string username, string connectionName, Table table)
         {
-            var sessionFactory = this.UserDatabaseService.GetSessionFactory(username, databaseName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
 
             using (var session = sessionFactory.OpenSession())
             {

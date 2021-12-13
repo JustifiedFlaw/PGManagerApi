@@ -20,7 +20,7 @@ namespace PGManagerApi.Services
                     c.Password(databaseSettings.Password);
                 }));
 
-            nhConfiguration.Mappings(m => m.FluentMappings.AddFromAssemblyOf<UserDatabaseMapping>());
+            nhConfiguration.Mappings(m => m.FluentMappings.AddFromAssemblyOf<DatabaseConnectionMapping>());
 
             var sessionFactory = nhConfiguration.BuildSessionFactory();
 
