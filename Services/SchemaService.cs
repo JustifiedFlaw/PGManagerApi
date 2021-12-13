@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using PGManagerApi.Models;
 
@@ -19,6 +21,20 @@ namespace PGManagerApi.Services
             using (var session = sessionFactory.OpenSession())
             {
                  return session.Query<Table>().ToArray();
+            }
+        }
+
+        public IEnumerable<Column> GetColumns(string username, string databaseName, Table table)
+        {
+            var sessionFactory = this.UserDatabaseService.GetSessionFactory(username, databaseName);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                 return session.Query<Column>()
+                    .Where(c => c.SchemaName == table.SchemaName
+                        && c.TableName == table.TableName)
+                    .OrderBy(c => c.OrdinalPosition)
+                    .ToArray();
             }
         }
     }

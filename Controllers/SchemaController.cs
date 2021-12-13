@@ -24,5 +24,17 @@ namespace PGManagerApi.Controllers
             var username = this.HttpContext.User.Identity.Name;
             return this.SchemaService.GetTables(username, database);
         }
+
+        [HttpGet("columns")]
+        public IEnumerable<Column> GetColumns([FromRoute] string database, [FromQuery] string schema, [FromQuery] string table)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table
+            {
+                SchemaName = schema,
+                TableName = table
+            };
+            return this.SchemaService.GetColumns(username, database, schemaTable);
+        }
     }
 }
