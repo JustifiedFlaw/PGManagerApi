@@ -24,6 +24,19 @@ namespace PGManagerApi.Services
             }
         }
 
+        public void CreateDatabase(string username, string connectionName, Database database)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                // TODO: protect against injections
+                //       by parameter gave the error: syntax error at or near "$1"
+                 session.CreateSQLQuery($"CREATE DATABASE {database.Name}")
+                    .ExecuteUpdate();
+            }
+        }
+
         public Table[] GetTables(string username, string connectionName)
         {
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
