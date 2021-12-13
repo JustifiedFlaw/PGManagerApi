@@ -68,6 +68,7 @@ namespace PGManagerApi.Services
             using (var session = this.SessionFactory.OpenSession())
             using (var transaction = session.BeginTransaction())
             {
+                connection.Id = 0;
                 session.SaveOrUpdate(connection);
                 transaction.Commit();
             }
