@@ -26,6 +26,8 @@ namespace PGManagerApi.Services
                         && x.DatabaseName == databaseName)
                     .FirstOrDefault();
                 
+                // TODO: decrypt password
+
                 if (userDatabase == null)
                 {
                     throw new UserDatabaseNotFoundException(username, databaseName);

@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using PGManagerApi.Models;
 using PGManagerApi.Services;
+using PGManagerApi.Authentication;
 
 namespace PGManagerApi.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("{database}")]
+    [BasicAuthorization]
     public class SchemaController : ControllerBase
     {
         SchemaService SchemaService;
@@ -17,10 +19,10 @@ namespace PGManagerApi.Controllers
         }
 
         [HttpGet("tables")]
-        public IEnumerable<Table> GetTables()
+        public IEnumerable<Table> GetTables([FromRoute] string database)
         {
-            // TODO get user and db by auth or session or something
-            return this.SchemaService.GetTables("JustifiedFlaw", "local");
+            var username = this.HttpContext.User.Identity.Name;
+            return this.SchemaService.GetTables(username, database);
         }
     }
 }
