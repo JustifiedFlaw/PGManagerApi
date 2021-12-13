@@ -7,6 +7,7 @@ namespace PGManagerApi.Mappings
     {
         public TableMapping()
         {
+            this.Schema("pg_catalog");
             this.Table("pg_tables");
 
             this.CompositeId()
