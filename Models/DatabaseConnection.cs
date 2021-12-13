@@ -4,6 +4,7 @@ namespace PGManagerApi.Models
 {
     public class DatabaseConnection
     {
+        public virtual int Id { get; set; }
         public virtual string Username { get; set; }
         public virtual string ConnectionName { get; set; }
 

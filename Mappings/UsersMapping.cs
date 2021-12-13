@@ -1,7 +1,7 @@
 using FluentNHibernate.Mapping;
 using PGManagerApi.Models;
 
-namespace WrBotApi.Mappings
+namespace PGManagerApi.Mappings
 {
     public class UserMapping : ClassMap<User>
     {

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
@@ -17,7 +18,17 @@ namespace PGManagerApi.Services
             this.SessionFactory = sessionFactory;
         }
 
-        public ISessionFactory GetSessionFactory(string username, string connectionName)
+        public DatabaseConnection[] GetConnections(string username)
+        {
+            using (var session = this.SessionFactory.OpenSession())
+            {
+                return session.Query<DatabaseConnection>()
+                    .Where(x => x.Username == username)
+                    .ToArray();
+            }
+        }
+
+        public DatabaseConnection GetConnection(string username, string connectionName)
         {
             using (var session = this.SessionFactory.OpenSession())
             {
@@ -25,15 +36,40 @@ namespace PGManagerApi.Services
                     .Where(x => x.Username == username 
                         && x.ConnectionName == connectionName)
                     .FirstOrDefault();
-                
-                // TODO: decrypt password
 
                 if (connection == null)
                 {
                     throw new DatabaseConnectionNotFoundException(username, connectionName);
                 }
 
-                return CreateSessionFactory(connection);
+                return connection;
+            }
+        }
+
+        public ISessionFactory GetSessionFactory(string username, string connectionName)
+        {
+            var connection = this.GetConnection(username, connectionName);
+
+            return CreateSessionFactory(connection);
+        }
+
+        public void Update(DatabaseConnection connection)
+        {
+            using (var session = this.SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                session.Merge(connection);
+                transaction.Commit();
+            }
+        }
+
+        public void Add(DatabaseConnection connection)
+        {
+            using (var session = this.SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                session.SaveOrUpdate(connection);
+                transaction.Commit();
             }
         }
 

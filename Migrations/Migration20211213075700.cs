@@ -1,6 +1,6 @@
 using FluentMigrator;
 
-namespace WrBotApi.Migrations
+namespace PGManagerApi.Migrations
 {
     [Migration(20211213075700)]
     public class AddUserTable : Migration

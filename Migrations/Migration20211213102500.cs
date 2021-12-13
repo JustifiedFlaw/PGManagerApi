@@ -1,6 +1,6 @@
 using FluentMigrator;
 
-namespace WrBotApi.Migrations
+namespace PGManagerApi.Migrations
 {
     [Migration(20211213102500)]
     public class RenameUserDatabaseToDatabaseConnection : Migration

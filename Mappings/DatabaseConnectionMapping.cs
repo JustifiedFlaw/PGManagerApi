@@ -9,10 +9,10 @@ namespace PGManagerApi.Mappings
         {
             this.Table("databaseconnections");
 
-            this.CompositeId()
-                .KeyProperty(x => x.Username)
-                .KeyProperty(x => x.ConnectionName);
+            this.Id(x => x.Id).GeneratedBy.Increment();
 
+            this.Map(x => x.Username);
+            this.Map(x => x.ConnectionName);
             this.Map(x => x.ConnectionHost);
             this.Map(x => x.ConnectionPort);
             this.Map(x => x.ConnectionDatabase);
