@@ -7,7 +7,7 @@ using PGManagerApi.Authentication;
 namespace PGManagerApi.Controllers
 {
     [ApiController]
-    [Route("{database}")]
+    [Route("{connection}")]
     [BasicAuthorization]
     public class SchemaController : ControllerBase
     {
@@ -18,15 +18,22 @@ namespace PGManagerApi.Controllers
             this.SchemaService = schemaService;
         }
 
-        [HttpGet("tables")]
-        public IEnumerable<Table> GetTables([FromRoute] string database)
+        [HttpGet("databases")]
+        public IEnumerable<Database> GetDatabases([FromRoute] string connection)
         {
             var username = this.HttpContext.User.Identity.Name;
-            return this.SchemaService.GetTables(username, database);
+            return this.SchemaService.GetDatabases(username, connection);
+        }
+
+        [HttpGet("tables")]
+        public IEnumerable<Table> GetTables([FromRoute] string connection)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            return this.SchemaService.GetTables(username, connection);
         }
 
         [HttpGet("columns")]
-        public IEnumerable<Column> GetColumns([FromRoute] string database, [FromQuery] string schema, [FromQuery] string table)
+        public IEnumerable<Column> GetColumns([FromRoute] string connection, [FromQuery] string schema, [FromQuery] string table)
         {
             var username = this.HttpContext.User.Identity.Name;
             var schemaTable = new Table
@@ -34,7 +41,7 @@ namespace PGManagerApi.Controllers
                 SchemaName = schema,
                 TableName = table
             };
-            return this.SchemaService.GetColumns(username, database, schemaTable);
+            return this.SchemaService.GetColumns(username, connection, schemaTable);
         }
     }
 }

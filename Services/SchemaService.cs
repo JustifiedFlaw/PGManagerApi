@@ -14,6 +14,16 @@ namespace PGManagerApi.Services
             this.DatabaseConnectionService = databaseConnectionService;
         }
 
+        public Database[] GetDatabases(string username, string connectionName)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                 return session.Query<Database>().ToArray();
+            }
+        }
+
         public Table[] GetTables(string username, string connectionName)
         {
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
