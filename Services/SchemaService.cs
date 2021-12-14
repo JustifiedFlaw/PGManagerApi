@@ -68,7 +68,6 @@ namespace PGManagerApi.Services
             {
                 // TODO: protect against injections
                 //       by parameter gave the error: syntax error at or near "$1"
-                // TODO: columns parameter
                 session.CreateSQLQuery($"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"" +
                                     $"RENAME TO \"{newName}\"")
                     .ExecuteUpdate();
@@ -83,7 +82,6 @@ namespace PGManagerApi.Services
             {
                 // TODO: protect against injections
                 //       by parameter gave the error: syntax error at or near "$1"
-                // TODO: columns parameter
                 session.CreateSQLQuery($"DROP TABLE \"{table.SchemaName}\".\"{table.TableName}\"")
                     .ExecuteUpdate();
             }
