@@ -47,6 +47,20 @@ namespace PGManagerApi.Services
             }
         }
 
+        public void CreateTable(string username, string connectionName, Table table)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                // TODO: protect against injections
+                //       by parameter gave the error: syntax error at or near "$1"
+                // TODO: columns parameter
+                session.CreateSQLQuery($"CREATE TABLE \"{table.SchemaName}\".\"{table.TableName}\" (id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY)")
+                    .ExecuteUpdate();
+            }
+        }
+
         public IEnumerable<Column> GetColumns(string username, string connectionName, Table table)
         {
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);

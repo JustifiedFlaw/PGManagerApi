@@ -39,6 +39,13 @@ namespace PGManagerApi.Controllers
             return this.SchemaService.GetTables(username, connection);
         }
 
+        [HttpPost("tables")]
+        public void CreateTable([FromRoute] string connection, [FromBody] Table table)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            this.SchemaService.CreateTable(username, connection, table);
+        }
+
         [HttpGet("columns")]
         public IEnumerable<Column> GetColumns([FromRoute] string connection, [FromQuery] string schema, [FromQuery] string table)
         {
