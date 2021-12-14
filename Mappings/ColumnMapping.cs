@@ -17,6 +17,8 @@ namespace PGManagerApi.Mappings
             
             this.Map(x => x.DataType, "data_type");
             this.Map(x => x.OrdinalPosition, "ordinal_position");
+            this.Map(x => x.IsNullable, "is_nullable").CustomType(typeof(YesNoType));
+            this.Map(x => x.CharacterMaximumLength, "character_maximum_length");
         }
     }
 }

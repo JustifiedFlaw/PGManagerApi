@@ -9,6 +9,8 @@ namespace PGManagerApi.Models
         public virtual string ColumnName { get; set; }
         public virtual string DataType { get; set; }
         public virtual int OrdinalPosition { get; set; }
+        public virtual bool IsNullable { get; set; }
+        public virtual int? CharacterMaximumLength { get; set; }
 
         public override bool Equals(object obj)
         {
