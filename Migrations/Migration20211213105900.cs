@@ -15,7 +15,7 @@ namespace PGManagerApi.Migrations
         {
             this.Create.Column("id")
                 .OnTable("databaseconnections")
-                .AsInt64().Identity().PrimaryKey(); // TODO: did not change PK
+                .AsInt64().Identity().PrimaryKey();
             
             this.Create.Index()
                 .OnTable("databaseconnections")
