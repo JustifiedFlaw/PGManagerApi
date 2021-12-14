@@ -61,6 +61,20 @@ namespace PGManagerApi.Services
             }
         }
 
+        public void DropTable(string username, string connectionName, Table table)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                // TODO: protect against injections
+                //       by parameter gave the error: syntax error at or near "$1"
+                // TODO: columns parameter
+                session.CreateSQLQuery($"DROP TABLE \"{table.SchemaName}\".\"{table.TableName}\"")
+                    .ExecuteUpdate();
+            }
+        }
+
         public IEnumerable<Column> GetColumns(string username, string connectionName, Table table)
         {
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);

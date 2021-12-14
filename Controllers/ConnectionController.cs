@@ -7,7 +7,7 @@ using PGManagerApi.Authentication;
 namespace PGManagerApi.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("connections")]
     [BasicAuthorization]
     public class ConnectionController : ControllerBase
     {
@@ -18,7 +18,7 @@ namespace PGManagerApi.Controllers
             this.DatabaseConnectionService = databaseConnectionService;
         }
 
-        [HttpGet("connections")]
+        [HttpGet()]
         public IEnumerable<DatabaseConnection> GetConnections()
         {
             var username = this.HttpContext.User.Identity.Name;
@@ -32,15 +32,15 @@ namespace PGManagerApi.Controllers
             return this.DatabaseConnectionService.GetConnection(username, connection);
         }
 
-        [HttpPut("{connectionName}")]
-        public void Update([FromRoute] string connectionName, [FromBody] DatabaseConnection connection)
+        [HttpPut]
+        public void Update([FromBody] DatabaseConnection connection)
         {
             var username = this.HttpContext.User.Identity.Name;
             this.DatabaseConnectionService.Update(connection);
         }
 
-        [HttpPost("{connectionName}")]
-        public void Add([FromRoute] string connectionName, [FromBody] DatabaseConnection connection)
+        [HttpPost]
+        public void Add([FromBody] DatabaseConnection connection)
         {
             var username = this.HttpContext.User.Identity.Name;
             this.DatabaseConnectionService.Add(connection);

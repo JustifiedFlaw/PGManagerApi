@@ -7,7 +7,7 @@ using PGManagerApi.Authentication;
 namespace PGManagerApi.Controllers
 {
     [ApiController]
-    [Route("{connection}")]
+    [Route("connections/{connection}")]
     [BasicAuthorization]
     public class SchemaController : ControllerBase
     {
@@ -46,8 +46,15 @@ namespace PGManagerApi.Controllers
             this.SchemaService.CreateTable(username, connection, table);
         }
 
-        [HttpGet("columns")]
-        public IEnumerable<Column> GetColumns([FromRoute] string connection, [FromQuery] string schema, [FromQuery] string table)
+        [HttpDelete("tables")]
+        public void DropTable([FromRoute] string connection, [FromBody] Table table)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            this.SchemaService.CreateTable(username, connection, table);
+        }
+
+        [HttpGet("tables/{schema}/{table}/columns")]
+        public IEnumerable<Column> GetColumns([FromRoute] string connection, [FromRoute] string schema, [FromRoute] string table)
         {
             var username = this.HttpContext.User.Identity.Name;
             var schemaTable = new Table
