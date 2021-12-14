@@ -46,11 +46,16 @@ namespace PGManagerApi.Controllers
             this.SchemaService.CreateTable(username, connection, table);
         }
 
-        [HttpDelete("tables")]
-        public void DropTable([FromRoute] int connection, [FromBody] Table table)
+        [HttpDelete("tables/{schema}/{table}")]
+        public void DropTable([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table)
         {
             var username = this.HttpContext.User.Identity.Name;
-            this.SchemaService.CreateTable(username, connection, table);
+            var schemaTable = new Table
+            {
+                SchemaName = schema,
+                TableName = table
+            };
+            this.SchemaService.DropTable(username, connection, schemaTable);
         }
 
         [HttpGet("tables/{schema}/{table}/columns")]
