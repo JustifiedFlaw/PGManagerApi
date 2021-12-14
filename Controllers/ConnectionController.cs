@@ -45,5 +45,12 @@ namespace PGManagerApi.Controllers
             var username = this.HttpContext.User.Identity.Name;
             this.DatabaseConnectionService.Add(connection);
         }
+
+        [HttpDelete("{id}")]
+        public void DeleteConnection([FromRoute] int id)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            this.DatabaseConnectionService.DeleteConnection(username, id);
+        }
     }
 }

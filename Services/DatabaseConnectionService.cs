@@ -73,6 +73,19 @@ namespace PGManagerApi.Services
             }
         }
 
+        public void DeleteConnection(string username, int id)
+        {
+            using (var session = this.SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                var connection = this.GetConnection(username, id);
+
+                session.Delete(connection);
+                
+                transaction.Commit();
+            }
+        }
+
         private ISessionFactory CreateSessionFactory(DatabaseConnection databaseConnection)
         {
             var nhConfiguration = Fluently.Configure();
