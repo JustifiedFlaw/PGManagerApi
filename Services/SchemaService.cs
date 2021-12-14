@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using PGManagerApi.Models;
@@ -14,9 +13,9 @@ namespace PGManagerApi.Services
             this.DatabaseConnectionService = databaseConnectionService;
         }
 
-        public Database[] GetDatabases(string username, string connectionName)
+        public Database[] GetDatabases(string username, int connectionId)
         {
-            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
             {
@@ -24,9 +23,9 @@ namespace PGManagerApi.Services
             }
         }
 
-        public void CreateDatabase(string username, string connectionName, Database database)
+        public void CreateDatabase(string username, int connectionId, Database database)
         {
-            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
             {
@@ -37,9 +36,9 @@ namespace PGManagerApi.Services
             }
         }
 
-        public Table[] GetTables(string username, string connectionName)
+        public Table[] GetTables(string username, int connectionId)
         {
-            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
             {
@@ -47,9 +46,9 @@ namespace PGManagerApi.Services
             }
         }
 
-        public void CreateTable(string username, string connectionName, Table table)
+        public void CreateTable(string username, int connectionId, Table table)
         {
-            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
             {
@@ -61,9 +60,9 @@ namespace PGManagerApi.Services
             }
         }
 
-        public void DropTable(string username, string connectionName, Table table)
+        public void DropTable(string username, int connectionId, Table table)
         {
-            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
             {
@@ -75,9 +74,9 @@ namespace PGManagerApi.Services
             }
         }
 
-        public IEnumerable<Column> GetColumns(string username, string connectionName, Table table)
+        public IEnumerable<Column> GetColumns(string username, int connectionId, Table table)
         {
-            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionName);
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
             {

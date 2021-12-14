@@ -28,27 +28,26 @@ namespace PGManagerApi.Services
             }
         }
 
-        public DatabaseConnection GetConnection(string username, string connectionName)
+        public DatabaseConnection GetConnection(string username, int connectionId)
         {
             using (var session = this.SessionFactory.OpenSession())
             {
                 var connection = session.Query<DatabaseConnection>()
-                    .Where(x => x.Username == username 
-                        && x.ConnectionName == connectionName)
+                    .Where(x => x.Id == connectionId)
                     .FirstOrDefault();
 
-                if (connection == null)
+                if (connection == null || connection.Username != username)
                 {
-                    throw new DatabaseConnectionNotFoundException(username, connectionName);
+                    throw new DatabaseConnectionNotFoundException(username, connectionId);
                 }
 
                 return connection;
             }
         }
 
-        public ISessionFactory GetSessionFactory(string username, string connectionName)
+        public ISessionFactory GetSessionFactory(string username, int connectionId)
         {
-            var connection = this.GetConnection(username, connectionName);
+            var connection = this.GetConnection(username, connectionId);
 
             return CreateSessionFactory(connection);
         }

@@ -25,11 +25,11 @@ namespace PGManagerApi.Controllers
             return this.DatabaseConnectionService.GetConnections(username);
         }
 
-        [HttpGet("{connection}")]
-        public DatabaseConnection GetConnection([FromRoute] string connection)
+        [HttpGet("{id}")]
+        public DatabaseConnection GetConnection([FromRoute] int id)
         {
             var username = this.HttpContext.User.Identity.Name;
-            return this.DatabaseConnectionService.GetConnection(username, connection);
+            return this.DatabaseConnectionService.GetConnection(username, id);
         }
 
         [HttpPut]
