@@ -60,6 +60,21 @@ namespace PGManagerApi.Services
             }
         }
 
+        public void RenameTable(string username, int connectionId, Table table, string newName)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                // TODO: protect against injections
+                //       by parameter gave the error: syntax error at or near "$1"
+                // TODO: columns parameter
+                session.CreateSQLQuery($"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"" +
+                                    $"RENAME TO \"{newName}\"")
+                    .ExecuteUpdate();
+            }
+        }
+
         public void DropTable(string username, int connectionId, Table table)
         {
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
