@@ -3,7 +3,7 @@ using FluentMigrator;
 namespace PGManagerApi.Migrations
 {
     [Migration(20211214145900)]
-    public class MakeIdPrimaryKeyInCOnnections : Migration
+    public class MakeIdPrimaryKeyInConnections : Migration
     {
         public override void Down()
         {
