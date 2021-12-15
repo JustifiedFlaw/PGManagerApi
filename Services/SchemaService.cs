@@ -114,10 +114,8 @@ namespace PGManagerApi.Services
 
                     var query = $"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"";
 
-                    foreach (var column in columns)
-                    {
-                        query += $"\nADD COLUMN {column.ColumnName} {column.GetTypeString()}";
-                    }
+                    query += string.Join(',',
+                        columns.Select(c => $"\nADD COLUMN {c.ColumnName} {c.GetTypeString()}"));
 
                     command.CommandText = query;
 
