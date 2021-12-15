@@ -30,8 +30,6 @@ namespace PGManagerApi.Services
 
             using (var session = sessionFactory.OpenSession())
             {
-                // TODO: protect against injections
-                //       by parameter gave the error: syntax error at or near "$1"
                  session.CreateSQLQuery($"CREATE DATABASE {database.Name}")
                     .ExecuteUpdate();
             }
@@ -67,8 +65,6 @@ namespace PGManagerApi.Services
 
             using (var session = sessionFactory.OpenSession())
             {
-                // TODO: protect against injections
-                //       by parameter gave the error: syntax error at or near "$1"
                 session.CreateSQLQuery($"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"" +
                                     $"RENAME TO \"{newName}\"")
                     .ExecuteUpdate();
@@ -81,8 +77,6 @@ namespace PGManagerApi.Services
 
             using (var session = sessionFactory.OpenSession())
             {
-                // TODO: protect against injections
-                //       by parameter gave the error: syntax error at or near "$1"
                 session.CreateSQLQuery($"DROP TABLE \"{table.SchemaName}\".\"{table.TableName}\"")
                     .ExecuteUpdate();
             }
@@ -121,6 +115,30 @@ namespace PGManagerApi.Services
 
                     command.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void RenameColumn(string username, int connectionId, Table table, string columnName, string newName)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                session.CreateSQLQuery($"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"" + 
+                                    $"\nRENAME COLUMN {columnName} TO  {newName}")
+                    .ExecuteUpdate();
+            }
+        }
+
+        public void DropColumn(string username, int connectionId, Table table, string columnName)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                session.CreateSQLQuery($"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"" + 
+                                    $"\nDROP COLUMN {columnName}")
+                    .ExecuteUpdate();
             }
         }
     }

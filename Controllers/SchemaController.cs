@@ -93,5 +93,29 @@ namespace PGManagerApi.Controllers
             };
             this.SchemaService.AddColumns(username, connection, schemaTable, columns);
         }
+
+        [HttpPut("tables/{schema}/{table}/columns/{columnName}")]
+        public void RenameColumn([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromRoute] string columnName, [FromQuery] string newName)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table
+            {
+                SchemaName = schema,
+                TableName = table
+            };
+            this.SchemaService.RenameColumn(username, connection, schemaTable, columnName, newName);
+        }
+
+        [HttpDelete("tables/{schema}/{table}/columns/{columnName}")]
+        public void DropColumn([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromRoute] string columnName)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table
+            {
+                SchemaName = schema,
+                TableName = table
+            };
+            this.SchemaService.DropColumn(username, connection, schemaTable, columnName);
+        }
     }
 }
