@@ -11,6 +11,8 @@ namespace PGManagerApi.Models
         public virtual int OrdinalPosition { get; set; }
         public virtual bool IsNullable { get; set; }
         public virtual int? CharacterMaximumLength { get; set; }
+        public virtual bool IsIdentity { get; set; }
+        public virtual string IdentityGeneration { get; set; }
 
         public virtual string GetTypeString()
         {
@@ -22,6 +24,12 @@ namespace PGManagerApi.Models
             }
 
             type += " " + (this.IsNullable ? "NULL" : "NOT NULL");
+
+            if (this.IsIdentity)
+            {
+                var generation = this.IdentityGeneration ?? "ALWAYS";
+                type += " GENERATED " + generation + " AS IDENTITY";
+            }
 
             return type;
         }
