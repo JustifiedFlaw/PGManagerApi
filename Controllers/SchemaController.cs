@@ -81,5 +81,17 @@ namespace PGManagerApi.Controllers
             };
             return this.SchemaService.GetColumns(username, connection, schemaTable);
         }
+
+        [HttpPost("tables/{schema}/{table}/columns")]
+        public void AddColumns([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Column[] columns)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table
+            {
+                SchemaName = schema,
+                TableName = table
+            };
+            this.SchemaService.AddColumns(username, connection, schemaTable, columns);
+        }
     }
 }

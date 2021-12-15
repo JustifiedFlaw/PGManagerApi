@@ -3,6 +3,7 @@ using System.Linq;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
+using Npgsql;
 using PGManagerApi.Exceptions;
 using PGManagerApi.Mappings;
 using PGManagerApi.Models;
@@ -101,6 +102,20 @@ namespace PGManagerApi.Services
             nhConfiguration.Mappings(m => m.FluentMappings.AddFromAssemblyOf<TableMapping>());
 
             return nhConfiguration.BuildSessionFactory();
+        }
+
+        public NpgsqlConnection GetNpgsqlConnection(string username, int connectionId)
+        {
+            var connection = this.GetConnection(username, connectionId);
+
+            var connectionStringBuilder = new Npgsql.NpgsqlConnectionStringBuilder();
+            connectionStringBuilder.Host = connection.ConnectionHost;
+            connectionStringBuilder.Port = connection.ConnectionPort;
+            connectionStringBuilder.Database = connection.ConnectionDatabase;
+            connectionStringBuilder.Username = connection.ConnectionUsername;
+            connectionStringBuilder.Password = connection.ConnectionPassword;
+
+            return new NpgsqlConnection(connectionStringBuilder.ConnectionString);
         }
     }
 }

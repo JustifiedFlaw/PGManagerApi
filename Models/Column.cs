@@ -12,6 +12,20 @@ namespace PGManagerApi.Models
         public virtual bool IsNullable { get; set; }
         public virtual int? CharacterMaximumLength { get; set; }
 
+        public virtual string GetTypeString()
+        {
+            var type = $"{this.DataType}";
+
+            if (this.CharacterMaximumLength > 0)
+            {
+                type += $"({this.CharacterMaximumLength})";
+            }
+
+            type += " " + (this.IsNullable ? "NULL" : "NOT NULL");
+
+            return type;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is Column)

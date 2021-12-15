@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Npgsql;
 using PGManagerApi.Models;
 
 namespace PGManagerApi.Services
@@ -98,6 +99,30 @@ namespace PGManagerApi.Services
                         && c.TableName == table.TableName)
                     .OrderBy(c => c.OrdinalPosition)
                     .ToArray();
+            }
+        }
+
+        public void AddColumns(string username, int connectionId, Table table, IEnumerable<Column> columns)
+        {
+            if (columns.Count() > 0)
+            {
+                using (var npgSqlConnection = this.DatabaseConnectionService.GetNpgsqlConnection(username, connectionId))
+                using (var command = new NpgsqlCommand())
+                {
+                    npgSqlConnection.Open();
+                    command.Connection = npgSqlConnection;
+
+                    var query = $"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"";
+
+                    foreach (var column in columns)
+                    {
+                        query += $"\nADD COLUMN {column.ColumnName} {column.GetTypeString()}";
+                    }
+
+                    command.CommandText = query;
+
+                    command.ExecuteNonQuery();
+                }
             }
         }
     }
