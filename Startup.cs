@@ -55,7 +55,7 @@ namespace PGManagerApi
             services.AddControllers(options =>
             {
                 options.Filters.Add<DatabaseConnectionNotFoundExceptionFilter>();
-            });
+            }).AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

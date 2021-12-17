@@ -2,6 +2,7 @@
 using PGManagerApi.Models;
 using PGManagerApi.Services;
 using PGManagerApi.Authentication;
+using System.Text.Json;
 
 namespace PGManagerApi.Controllers
 {
@@ -28,5 +29,31 @@ namespace PGManagerApi.Controllers
             };
             return this.DataService.GetData(username, connection, schemaTable, startRow, rowCount);
         }
+
+        [HttpPost("tables/{schema}/{table}/data")]
+        public void InsertData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Data data)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table
+            {
+                SchemaName = schema,
+                TableName = table
+            };
+
+            // RemoveJson(data);
+
+            this.DataService.InsertData(username, connection, schemaTable, data);
+        }
+
+        // private void RemoveJson(Data data)
+        // {
+        //     foreach (var row in data.Rows)
+        //     {
+        //         foreach (var item in row)
+        //         {
+        //             row[item.Key] = ((JsonElement)item.Value).;
+        //         }
+        //     }
+        // }
     }
 }
