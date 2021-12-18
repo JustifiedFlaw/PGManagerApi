@@ -40,20 +40,20 @@ namespace PGManagerApi.Controllers
                 TableName = table
             };
 
-            // RemoveJson(data);
-
             this.DataService.InsertData(username, connection, schemaTable, data);
         }
 
-        // private void RemoveJson(Data data)
-        // {
-        //     foreach (var row in data.Rows)
-        //     {
-        //         foreach (var item in row)
-        //         {
-        //             row[item.Key] = ((JsonElement)item.Value).;
-        //         }
-        //     }
-        // }
+        [HttpPut("tables/{schema}/{table}/data")]
+        public void UpdateData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Update update)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table
+            {
+                SchemaName = schema,
+                TableName = table
+            };
+
+            this.DataService.UpdateData(username, connection, schemaTable, update);
+        }
     }
 }

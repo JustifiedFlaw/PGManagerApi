@@ -91,7 +91,7 @@ namespace PGManagerApi.Services
             }
         }
 
-        public void UpdateData(string username, int connectionId, Table table, Data data)
+        public void UpdateData(string username, int connectionId, Table table, Update update)
         {
             using (var npgSqlConnection = this.DatabaseConnectionService.GetNpgsqlConnection(username, connectionId))
             {
@@ -104,25 +104,15 @@ namespace PGManagerApi.Services
 
                     try
                     {
-                        foreach (var row in data.Rows)
-                        {
-                            command.CommandText = $"UPDATE \"{table.SchemaName}\".\"{table.TableName}\" SET ";
-                            command.CommandText += string.Join(',', row.Select(f => $"{f.Key} = @{f.Key}"));
+                        command.CommandText = $"UPDATE \"{table.SchemaName}\".\"{table.TableName}\" SET ";
+                        command.CommandText += string.Join(',', update.Row.Select(f => $"{f.Key} = @{f.Key}"));
+                        AddParameters(command, update.FieldTypes, update.Row);
 
-                            command.Parameters.Clear();
-                            foreach (var field in row)
-                            {
-                                var type = Enum.Parse(typeof(NpgsqlDbType), data.FieldTypes[field.Key]);
-                                var parameter = new NpgsqlParameter($"@{field.Key}", type);
-                                parameter.Value = field.Value;
-                                command.Parameters.Add(parameter);
-                            }
+                        command.CommandText += " WHERE ";
+                        command.CommandText += string.Join(" AND ", update.Where.Select(f => $"{f.Key} = @{f.Key}"));
+                        AddParameters(command, update.FieldTypes, update.Where);
 
-                            command.CommandText += " WHERE ";
-                            // TODO
-
-                            command.ExecuteNonQuery();
-                        }
+                        command.ExecuteNonQuery();
 
                         transaction.Commit();
                     }
@@ -132,6 +122,19 @@ namespace PGManagerApi.Services
                         throw;
                     }
                 }
+            }
+        }
+
+        private static void AddParameters(NpgsqlCommand command, FieldTypes fieldTypes, Row row)
+        {
+            foreach (var field in row)
+            {
+                var type = Enum.Parse<NpgsqlDbType>(fieldTypes[field.Key], true);
+                var parameter = new NpgsqlParameter($"@{field.Key}", type)
+                {
+                    Value = field.Value
+                };
+                command.Parameters.Add(parameter);
             }
         }
     }

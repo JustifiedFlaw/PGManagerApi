@@ -5,8 +5,8 @@ namespace PGManagerApi.Models
 {
     public class Data
     {
-        public Dictionary<string, string> FieldTypes { get; set; } = new Dictionary<string, string>();
-        public List<Dictionary<string, object>> Rows { get; set; } = new List<Dictionary<string, object>>();
+        public FieldTypes FieldTypes { get; set; } = new FieldTypes();
+        public List<Row> Rows { get; set; } = new List<Row>();
 
         public Data()
         {
@@ -24,7 +24,7 @@ namespace PGManagerApi.Models
                     }
                 }
 
-                var row = new Dictionary<string, object>();
+                var row = new Row();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     row.Add(reader.GetName(i), reader[i]);
