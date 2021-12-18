@@ -22,11 +22,8 @@ namespace PGManagerApi.Controllers
         public Data GetData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromQuery] int startRow = 0, [FromQuery] int rowCount = 100)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
+
             return this.DataService.GetData(username, connection, schemaTable, startRow, rowCount);
         }
 
@@ -34,11 +31,7 @@ namespace PGManagerApi.Controllers
         public void InsertData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Data data)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
 
             this.DataService.InsertData(username, connection, schemaTable, data);
         }
@@ -47,13 +40,18 @@ namespace PGManagerApi.Controllers
         public void UpdateData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Update update)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
 
             this.DataService.UpdateData(username, connection, schemaTable, update);
+        }
+
+        [HttpDelete("tables/{schema}/{table}/data")]
+        public void DeleteData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Delete delete)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table(schema, table);
+
+            this.DataService.DeleteData(username, connection, schemaTable, delete);
         }
     }
 }

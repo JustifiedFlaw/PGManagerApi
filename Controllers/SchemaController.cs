@@ -50,11 +50,8 @@ namespace PGManagerApi.Controllers
         public void RenameTable([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromQuery] string newName)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
+
             this.SchemaService.RenameTable(username, connection, schemaTable, newName);
         }
 
@@ -62,11 +59,8 @@ namespace PGManagerApi.Controllers
         public void DropTable([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
+
             this.SchemaService.DropTable(username, connection, schemaTable);
         }
 
@@ -74,11 +68,8 @@ namespace PGManagerApi.Controllers
         public IEnumerable<Column> GetColumns([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
+
             return this.SchemaService.GetColumns(username, connection, schemaTable);
         }
 
@@ -86,11 +77,8 @@ namespace PGManagerApi.Controllers
         public void AddColumns([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Column[] columns)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
+
             this.SchemaService.AddColumns(username, connection, schemaTable, columns);
         }
 
@@ -98,11 +86,8 @@ namespace PGManagerApi.Controllers
         public void RenameColumn([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromRoute] string columnName, [FromQuery] string newName)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
+
             this.SchemaService.RenameColumn(username, connection, schemaTable, columnName, newName);
         }
 
@@ -110,11 +95,8 @@ namespace PGManagerApi.Controllers
         public void DropColumn([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromRoute] string columnName)
         {
             var username = this.HttpContext.User.Identity.Name;
-            var schemaTable = new Table
-            {
-                SchemaName = schema,
-                TableName = table
-            };
+            var schemaTable = new Table(schema, table);
+            
             this.SchemaService.DropColumn(username, connection, schemaTable, columnName);
         }
     }

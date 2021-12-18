@@ -7,6 +7,16 @@ namespace PGManagerApi.Models
         public virtual string SchemaName { get; set; }
         public virtual string TableName { get; set; }
 
+        public Table()
+        {
+        }
+
+        public Table(string schemaName, string tableName)
+        {
+            this.SchemaName = schemaName;
+            this.TableName = tableName;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is Table)

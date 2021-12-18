@@ -125,6 +125,36 @@ namespace PGManagerApi.Services
             }
         }
 
+        public void DeleteData(string username, int connectionId, Table table, Delete delete)
+        {
+            using (var npgSqlConnection = this.DatabaseConnectionService.GetNpgsqlConnection(username, connectionId))
+            {
+                npgSqlConnection.Open();
+                
+                using (var command = new NpgsqlCommand())
+                using (var transaction = npgSqlConnection.BeginTransaction())
+                {
+                    command.Connection = npgSqlConnection;
+
+                    try
+                    {
+                        command.CommandText = $"DELETE FROM \"{table.SchemaName}\".\"{table.TableName}\" WHERE ";
+                        command.CommandText += string.Join(" AND ", delete.Where.Select(f => $"{f.Key} = @{f.Key}"));
+                        AddParameters(command, delete.FieldTypes, delete.Where);
+
+                        command.ExecuteNonQuery();
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
         private static void AddParameters(NpgsqlCommand command, FieldTypes fieldTypes, Row row)
         {
             foreach (var field in row)
