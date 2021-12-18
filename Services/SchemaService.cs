@@ -141,5 +141,41 @@ namespace PGManagerApi.Services
                     .ExecuteUpdate();
             }
         }
+
+        public List<string> GetPrimaryKey(string username, int connectionId, Table table)
+        {
+            using (var npgSqlConnection = this.DatabaseConnectionService.GetNpgsqlConnection(username, connectionId))
+            using (var command = new NpgsqlCommand())
+            {
+                npgSqlConnection.Open();
+                command.Connection = npgSqlConnection;
+
+                command.CommandText = 
+                    "SELECT pg_attribute.attname " +
+                    "FROM pg_index, pg_class, pg_attribute, pg_namespace " +
+                    "WHERE pg_class.oid = @table::regclass " + 
+                        "AND indrelid = pg_class.oid " +
+                        "AND nspname = @schema " +
+                        "AND pg_class.relnamespace = pg_namespace.oid " +
+                        "AND pg_attribute.attrelid = pg_class.oid " +
+                        "AND pg_attribute.attnum = any(pg_index.indkey) " +
+                        "AND indisprimary";
+                        
+                command.Parameters.AddWithValue("table", table.TableName);
+                command.Parameters.AddWithValue("schema", table.SchemaName);
+
+                var fields = new List<string>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                         fields.Add((string)reader[0]);
+                    }
+                    reader.Close();
+                }
+
+                return fields;
+            }
+        }
     }
 }

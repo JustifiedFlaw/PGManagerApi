@@ -99,5 +99,14 @@ namespace PGManagerApi.Controllers
             
             this.SchemaService.DropColumn(username, connection, schemaTable, columnName);
         }
+
+        [HttpGet("tables/{schema}/{table}/primarykey")]
+        public IEnumerable<string> GetPrimaryKey([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            var schemaTable = new Table(schema, table);
+            
+            return this.SchemaService.GetPrimaryKey(username, connection, schemaTable);
+        }
     }
 }
