@@ -43,6 +43,7 @@ namespace PGManagerApi.Controllers
         public void Add([FromBody] DatabaseConnection connection)
         {
             var username = this.HttpContext.User.Identity.Name;
+            connection.Username = username;
             this.DatabaseConnectionService.Add(connection);
         }
 
