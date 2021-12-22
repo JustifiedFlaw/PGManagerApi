@@ -64,7 +64,19 @@ namespace PGManagerApi.Services
                 // TODO: protect against injections
                 //       by parameter gave the error: syntax error at or near "$1"
                 // TODO: columns parameter
+
+                EnsureSchema(session, table.SchemaName);
+
                 session.CreateSQLQuery($"CREATE TABLE \"{table.SchemaName}\".\"{table.TableName}\" (id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY)")
+                    .ExecuteUpdate();
+            }
+        }
+
+        private void EnsureSchema(NHibernate.ISession session, string schemaName)
+        {
+            if (!session.Query<Schema>().Any(s => s.Name == schemaName))
+            {
+                session.CreateSQLQuery($"CREATE SCHEMA \"{schemaName}\"")
                     .ExecuteUpdate();
             }
         }
