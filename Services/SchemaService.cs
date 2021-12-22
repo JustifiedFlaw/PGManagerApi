@@ -35,6 +35,16 @@ namespace PGManagerApi.Services
             }
         }
 
+        public Schema[] GetSchemas(string username, int connectionId)
+        {
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                 return session.Query<Schema>().ToArray();
+            }
+        }        
+
         public Table[] GetTables(string username, int connectionId)
         {
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);

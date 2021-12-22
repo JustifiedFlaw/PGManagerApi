@@ -32,6 +32,13 @@ namespace PGManagerApi.Controllers
             this.SchemaService.CreateDatabase(username, connection, database);
         }
 
+        [HttpGet("schemas")]
+        public IEnumerable<Schema> GetSchemas([FromRoute] int connection)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            return this.SchemaService.GetSchemas(username, connection);
+        }
+
         [HttpGet("tables")]
         public IEnumerable<Table> GetTables([FromRoute] int connection)
         {
