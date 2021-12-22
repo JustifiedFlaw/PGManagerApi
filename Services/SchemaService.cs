@@ -26,6 +26,8 @@ namespace PGManagerApi.Services
 
         public void CreateDatabase(string username, int connectionId, Database database)
         {
+            Validate.NoQuotes(database.Name, "database.Name");
+
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
@@ -57,12 +59,12 @@ namespace PGManagerApi.Services
 
         public void CreateTable(string username, int connectionId, Table table)
         {
+            ValidateTable(table);
+
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
             {
-                // TODO: protect against injections
-                //       by parameter gave the error: syntax error at or near "$1"
                 // TODO: columns parameter
 
                 EnsureSchema(session, table.SchemaName);
@@ -83,6 +85,9 @@ namespace PGManagerApi.Services
 
         public void RenameTable(string username, int connectionId, Table table, string newName)
         {
+            ValidateTable(table);
+            Validate.NoQuotes(newName, "newName");
+            
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
@@ -95,6 +100,8 @@ namespace PGManagerApi.Services
 
         public void DropTable(string username, int connectionId, Table table)
         {
+            ValidateTable(table);
+
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
@@ -120,6 +127,8 @@ namespace PGManagerApi.Services
 
         public void AddColumns(string username, int connectionId, Table table, IEnumerable<Column> columns)
         {
+            ValidateTable(table);
+
             if (columns.Count() > 0)
             {
                 using (var npgSqlConnection = this.DatabaseConnectionService.GetNpgsqlConnection(username, connectionId))
@@ -131,7 +140,7 @@ namespace PGManagerApi.Services
                     var query = $"ALTER TABLE \"{table.SchemaName}\".\"{table.TableName}\"";
 
                     query += string.Join(',',
-                        columns.Select(c => $"\nADD COLUMN {c.ColumnName} {c.GetTypeString()}"));
+                        columns.Select(c => $"\nADD COLUMN {Validate.NoQuotes(c.ColumnName, "ColumnName")} {c.GetTypeString()}"));
 
                     command.CommandText = query;
 
@@ -142,6 +151,10 @@ namespace PGManagerApi.Services
 
         public void RenameColumn(string username, int connectionId, Table table, string columnName, string newName)
         {
+            ValidateTable(table);
+            Validate.NoQuotes(columnName, "columnName");
+            Validate.NoQuotes(newName, "newName");
+
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
@@ -154,6 +167,9 @@ namespace PGManagerApi.Services
 
         public void DropColumn(string username, int connectionId, Table table, string columnName)
         {
+            ValidateTable(table);
+            Validate.NoQuotes(columnName, "columnName");
+
             var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
 
             using (var session = sessionFactory.OpenSession())
@@ -198,6 +214,12 @@ namespace PGManagerApi.Services
 
                 return fields;
             }
+        }
+
+        private void ValidateTable(Table table)
+        {
+            Validate.NoQuotes(table.SchemaName, "table.SchemaName");
+            Validate.NoQuotes(table.TableName, "table.TableName");
         }
     }
 }
