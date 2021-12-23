@@ -191,7 +191,7 @@ namespace PGManagerApi.Services
                 command.CommandText = 
                     "SELECT pg_attribute.attname " +
                     "FROM pg_index, pg_class, pg_attribute, pg_namespace " +
-                    "WHERE pg_class.oid = @table::regclass " + 
+                    "WHERE pg_class.relname = @table " + 
                         "AND indrelid = pg_class.oid " +
                         "AND nspname = @schema " +
                         "AND pg_class.relnamespace = pg_namespace.oid " +
