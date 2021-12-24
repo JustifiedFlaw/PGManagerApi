@@ -2,7 +2,6 @@
 using PGManagerApi.Models;
 using PGManagerApi.Services;
 using PGManagerApi.Authentication;
-using System.Text.Json;
 
 namespace PGManagerApi.Controllers
 {
