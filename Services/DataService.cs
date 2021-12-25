@@ -25,7 +25,7 @@ namespace PGManagerApi.Services
                 npgSqlConnection.Open();
                 command.Connection = npgSqlConnection;
 
-                command.CommandText = $"SELECT * FROM \"{table.SchemaName}\".\"{table.TableName}\" LIMIT {rowCount}";
+                command.CommandText = $"SELECT * FROM \"{table.SchemaName}\".\"{table.TableName}\" LIMIT {rowCount} OFFSET {startRow}";
 
                 Data data;
                 using (var reader = command.ExecuteReader())
