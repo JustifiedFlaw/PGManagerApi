@@ -24,16 +24,7 @@ namespace PGManagerApi.Controllers
         {
             var username = this.HttpContext.User.Identity.Name;
             var schemaTable = new Table(schema, table);
-
-            var where = new Row();
-            foreach (var key in this.HttpContext.Request.Query.Keys)
-            {
-                if (!key.Equals("startRow", StringComparison.InvariantCultureIgnoreCase)
-                    && !key.Equals("rowCount", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    where.Add(key, this.HttpContext.Request.Query[key].First());
-                }
-            }
+            var where = QueryStringToWhere();
 
             return this.DataService.GetData(username, connection, schemaTable, where, startRow, rowCount);
         }
@@ -57,12 +48,29 @@ namespace PGManagerApi.Controllers
         }
 
         [HttpDelete("tables/{schema}/{table}/data")]
-        public void DeleteData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table, [FromBody] Delete delete)
+        public void DeleteData([FromRoute] int connection, [FromRoute] string schema, [FromRoute] string table)
         {
             var username = this.HttpContext.User.Identity.Name;
             var schemaTable = new Table(schema, table);
 
-            this.DataService.DeleteData(username, connection, schemaTable, delete);
+            var where = QueryStringToWhere();
+
+            this.DataService.DeleteData(username, connection, schemaTable, where);
+        }
+
+        private Row QueryStringToWhere()
+        {
+            var where = new Row();
+            foreach (var key in this.HttpContext.Request.Query.Keys)
+            {
+                if (!key.Equals("startRow", StringComparison.InvariantCultureIgnoreCase)
+                    && !key.Equals("rowCount", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    where.Add(key, this.HttpContext.Request.Query[key].First());
+                }
+            }
+
+            return where;
         }
     }
 }
