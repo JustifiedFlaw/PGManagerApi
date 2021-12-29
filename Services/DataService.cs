@@ -11,13 +11,15 @@ namespace PGManagerApi.Services
     public class DataService
     {
         DatabaseConnectionService DatabaseConnectionService;
+        SchemaService SchemaService;
 
-        public DataService(DatabaseConnectionService databaseConnectionService)
+        public DataService(DatabaseConnectionService databaseConnectionService, SchemaService schemaService)
         {
             this.DatabaseConnectionService = databaseConnectionService;
+            this.SchemaService = schemaService;
         }
 
-        public Data GetData(string username, int connectionId, Table table, int startRow, int rowCount)
+        public Data GetData(string username, int connectionId, Table table, Row where, int startRow, int rowCount)
         {
             using (var npgSqlConnection = this.DatabaseConnectionService.GetNpgsqlConnection(username, connectionId))
             using (var command = new NpgsqlCommand())
@@ -25,7 +27,18 @@ namespace PGManagerApi.Services
                 npgSqlConnection.Open();
                 command.Connection = npgSqlConnection;
 
-                command.CommandText = $"SELECT * FROM \"{table.SchemaName}\".\"{table.TableName}\" LIMIT {rowCount} OFFSET {startRow}";
+                command.CommandText = $"SELECT * FROM \"{table.SchemaName}\".\"{table.TableName}\"";
+
+                if (where != null && where.Count > 0)
+                {
+                    var fieldTypes = GetFieldTypes(username, connectionId, table);
+
+                    command.CommandText += " WHERE ";
+                    command.CommandText += string.Join(" AND ", where.Select(f => $"{f.Key} = @{f.Key}"));
+                    AddParameters(command, fieldTypes, where);
+                }
+
+                command.CommandText += $" LIMIT {rowCount} OFFSET {startRow}";
 
                 Data data;
                 using (var reader = command.ExecuteReader())
@@ -159,13 +172,49 @@ namespace PGManagerApi.Services
         {
             foreach (var field in row)
             {
+                // TODO: type 'character varying' will cause error
                 var type = Enum.Parse<NpgsqlDbType>(fieldTypes[field.Key], true);
                 var parameter = new NpgsqlParameter($"@{field.Key}", type)
                 {
-                    Value = field.Value
+                    Value = Parse(field.Value, type)
                 };
                 command.Parameters.Add(parameter);
             }
+        }
+
+        private static object Parse(object value, NpgsqlDbType type)
+        {
+            // TODO: test with datetime
+            var stringValue = (value ?? "").ToString();
+            if (IsNumber(type))
+            {
+                return double.Parse(stringValue);
+            }
+
+            return stringValue;
+        }
+
+        private static bool IsNumber(NpgsqlDbType type)
+        {
+            return type == NpgsqlDbType.Bigint
+                || type == NpgsqlDbType.Double
+                || type == NpgsqlDbType.Integer
+                || type == NpgsqlDbType.Numeric
+                || type == NpgsqlDbType.Real
+                || type == NpgsqlDbType.Smallint;
+        }
+
+        private FieldTypes GetFieldTypes(string username, int connectionId, Table table)
+        {
+            var columns = this.SchemaService.GetColumns(username, connectionId, table);
+
+            var fieldTypes = new FieldTypes();
+            foreach (var column in columns)
+            {
+                fieldTypes.Add(column.ColumnName, column.DataType);                
+            }
+
+            return fieldTypes;
         }
     }
 }

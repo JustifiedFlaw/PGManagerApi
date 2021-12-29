@@ -2,6 +2,8 @@
 using PGManagerApi.Models;
 using PGManagerApi.Services;
 using PGManagerApi.Authentication;
+using System;
+using System.Linq;
 
 namespace PGManagerApi.Controllers
 {
@@ -23,7 +25,17 @@ namespace PGManagerApi.Controllers
             var username = this.HttpContext.User.Identity.Name;
             var schemaTable = new Table(schema, table);
 
-            return this.DataService.GetData(username, connection, schemaTable, startRow, rowCount);
+            var where = new Row();
+            foreach (var key in this.HttpContext.Request.Query.Keys)
+            {
+                if (!key.Equals("startRow", StringComparison.InvariantCultureIgnoreCase)
+                    && !key.Equals("rowCount", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    where.Add(key, this.HttpContext.Request.Query[key].First());
+                }
+            }
+
+            return this.DataService.GetData(username, connection, schemaTable, where, startRow, rowCount);
         }
 
         [HttpPost("tables/{schema}/{table}/data")]
