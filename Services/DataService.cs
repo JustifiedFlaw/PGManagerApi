@@ -78,7 +78,7 @@ namespace PGManagerApi.Services
 
                                 fields.Add("@" + varName);
 
-                                var type = Enum.Parse<NpgsqlDbType>(fieldTypes[field.Key], true);
+                                var type = fieldTypes[field.Key];
                                 command.Parameters.Add(new NpgsqlParameter(varName, type)
                                 {
                                     Value = field.Value
@@ -182,7 +182,7 @@ namespace PGManagerApi.Services
         {
             foreach (var field in row)
             {
-                var type = Enum.Parse<NpgsqlDbType>(fieldTypes[field.Key], true);
+                var type = fieldTypes[field.Key];
                 var parameter = new NpgsqlParameter($"@{field.Key}", type)
                 {
                     Value = Parse(field.Value, type)
@@ -220,8 +220,7 @@ namespace PGManagerApi.Services
             var fieldTypes = new FieldTypes();
             foreach (var column in columns)
             {
-                // TODO: type 'character varying' will cause error
-                fieldTypes.Add(column.ColumnName, column.DataType);                
+                fieldTypes.Add(column.ColumnName, FieldTypeMapper.Map(column.DataType));                
             }
 
             return fieldTypes;
