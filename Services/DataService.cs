@@ -62,6 +62,8 @@ namespace PGManagerApi.Services
                 {
                     command.Connection = npgSqlConnection;
 
+                    var fieldTypes = GetFieldTypes(username, connectionId, table);
+
                     try
                     {
                         var rows = new List<string>();
@@ -76,7 +78,7 @@ namespace PGManagerApi.Services
 
                                 fields.Add("@" + varName);
 
-                                var type = Enum.Parse<NpgsqlDbType>(data.FieldTypes[field.Key], true);
+                                var type = Enum.Parse<NpgsqlDbType>(fieldTypes[field.Key], true);
                                 command.Parameters.Add(new NpgsqlParameter(varName, type)
                                 {
                                     Value = field.Value
@@ -87,7 +89,7 @@ namespace PGManagerApi.Services
                         }
 
                         command.CommandText = $"INSERT INTO \"{table.SchemaName}\".\"{table.TableName}\" "
-                                    + "(" + string.Join(',', data.FieldTypes.Select(f => f.Key)) + ") " 
+                                    + "(" + string.Join(',', fieldTypes.Select(f => f.Key)) + ") " 
                                     + "VALUES " + string.Join(',', rows);
                         
                         command.ExecuteNonQuery();
@@ -138,8 +140,13 @@ namespace PGManagerApi.Services
             }
         }
 
-        public void DeleteData(string username, int connectionId, Table table, Delete delete)
+        public void DeleteData(string username, int connectionId, Table table, Row where)
         {
+            if (where == null || where.Count == 0)
+            {
+                throw new ArgumentException("No fields for where of delete provided");
+            }
+
             using (var npgSqlConnection = this.DatabaseConnectionService.GetNpgsqlConnection(username, connectionId))
             {
                 npgSqlConnection.Open();
@@ -152,8 +159,11 @@ namespace PGManagerApi.Services
                     try
                     {
                         command.CommandText = $"DELETE FROM \"{table.SchemaName}\".\"{table.TableName}\" WHERE ";
-                        command.CommandText += string.Join(" AND ", delete.Where.Select(f => $"{f.Key} = @{f.Key}"));
-                        AddParameters(command, delete.FieldTypes, delete.Where);
+                        command.CommandText += string.Join(" AND ", where.Select(f => $"{f.Key} = @{f.Key}"));
+                        
+                        var fieldTypes = GetFieldTypes(username, connectionId, table);
+
+                        AddParameters(command, fieldTypes, where);
 
                         command.ExecuteNonQuery();
 
@@ -172,7 +182,6 @@ namespace PGManagerApi.Services
         {
             foreach (var field in row)
             {
-                // TODO: type 'character varying' will cause error
                 var type = Enum.Parse<NpgsqlDbType>(fieldTypes[field.Key], true);
                 var parameter = new NpgsqlParameter($"@{field.Key}", type)
                 {
@@ -211,6 +220,7 @@ namespace PGManagerApi.Services
             var fieldTypes = new FieldTypes();
             foreach (var column in columns)
             {
+                // TODO: type 'character varying' will cause error
                 fieldTypes.Add(column.ColumnName, column.DataType);                
             }
 
