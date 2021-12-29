@@ -5,7 +5,6 @@ namespace PGManagerApi.Models
 {
     public class Data
     {
-        public FieldTypes FieldTypes { get; set; } = new FieldTypes();
         public List<Row> Rows { get; set; } = new List<Row>();
 
         public Data()
@@ -16,14 +15,6 @@ namespace PGManagerApi.Models
         {
             while (reader.Read())
             {
-                if (this.FieldTypes.Count == 0)
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        this.FieldTypes.Add(reader.GetName(i), reader.GetDataTypeName(i));
-                    }
-                }
-
                 var row = new Row();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
