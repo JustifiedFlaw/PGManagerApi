@@ -195,24 +195,39 @@ namespace PGManagerApi.Services
 
         private static object Parse(object value, NpgsqlDbType type)
         {
-            // TODO: test with datetime
-            var stringValue = (value ?? "").ToString();
-            if (IsNumber(type))
+            var stringValue = value?.ToString();
+            switch (type)
             {
-                return double.Parse(stringValue);
+                case NpgsqlDbType.Bigint:
+                case NpgsqlDbType.Double:
+                case NpgsqlDbType.Integer:
+                case NpgsqlDbType.Numeric:
+                case NpgsqlDbType.Real:
+                case NpgsqlDbType.Smallint:
+                    if (string.IsNullOrWhiteSpace(stringValue))
+                    {
+                        return DBNull.Value;
+                    }
+                    return double.Parse(stringValue);
+
+                case NpgsqlDbType.Time:
+                case NpgsqlDbType.TimeTz:
+                case NpgsqlDbType.Timestamp:
+                case NpgsqlDbType.TimestampTz:
+                case NpgsqlDbType.Date:
+                    if (string.IsNullOrWhiteSpace(stringValue))
+                    {
+                        return DBNull.Value;
+                    }
+                    return DateTime.Parse(stringValue);
+
+                default:
+                    if (stringValue == null)
+                    {
+                        return DBNull.Value;
+                    }
+                    return stringValue;
             }
-
-            return stringValue;
-        }
-
-        private static bool IsNumber(NpgsqlDbType type)
-        {
-            return type == NpgsqlDbType.Bigint
-                || type == NpgsqlDbType.Double
-                || type == NpgsqlDbType.Integer
-                || type == NpgsqlDbType.Numeric
-                || type == NpgsqlDbType.Real
-                || type == NpgsqlDbType.Smallint;
         }
 
         private FieldTypes GetFieldTypes(string username, int connectionId, Table table)
