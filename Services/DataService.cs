@@ -89,7 +89,7 @@ namespace PGManagerApi.Services
                         }
 
                         command.CommandText = $"INSERT INTO \"{table.SchemaName}\".\"{table.TableName}\" "
-                                    + "(" + string.Join(',', fieldTypes.Select(f => f.Key)) + ") " 
+                                    + "(" + string.Join(',', data.Rows.First().Select(f => f.Key)) + ") " 
                                     + "VALUES " + string.Join(',', rows);
                         
                         command.ExecuteNonQuery();

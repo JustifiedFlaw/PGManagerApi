@@ -13,6 +13,8 @@ namespace PGManagerApi.Services
                     return NpgsqlDbType.Double;
                 case "character varying":
                     return NpgsqlDbType.Varchar;
+                case "timestamp without time zone":
+                     return NpgsqlDbType.Timestamp;
                 default:
                     return Enum.Parse<NpgsqlDbType>(schemaName, true);
             }
