@@ -119,13 +119,15 @@ namespace PGManagerApi.Services
 
                     try
                     {
+                        var fieldTypes = GetFieldTypes(username, connectionId, table);
+
                         command.CommandText = $"UPDATE \"{table.SchemaName}\".\"{table.TableName}\" SET ";
                         command.CommandText += string.Join(',', update.Row.Select(f => $"{f.Key} = @{f.Key}"));
-                        AddParameters(command, update.FieldTypes, update.Row);
+                        AddParameters(command, fieldTypes, update.Row);
 
                         command.CommandText += " WHERE ";
                         command.CommandText += string.Join(" AND ", update.Where.Select(f => $"{f.Key} = @{f.Key}"));
-                        AddParameters(command, update.FieldTypes, update.Where);
+                        AddParameters(command, fieldTypes, update.Where);
 
                         command.ExecuteNonQuery();
 
