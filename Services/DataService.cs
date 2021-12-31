@@ -34,7 +34,7 @@ namespace PGManagerApi.Services
                     var fieldTypes = GetFieldTypes(username, connectionId, table);
 
                     command.CommandText += " WHERE ";
-                    command.CommandText += string.Join(" AND ", where.Select(f => $"{f.Key} = @{f.Key}"));
+                    command.CommandText += string.Join(" AND ", where.Select(f => $"\"{f.Key}\" = @{f.Key}"));
                     AddParameters(command, fieldTypes, where);
                 }
 
@@ -89,7 +89,7 @@ namespace PGManagerApi.Services
                         }
 
                         command.CommandText = $"INSERT INTO \"{table.SchemaName}\".\"{table.TableName}\" "
-                                    + "(" + string.Join(',', data.Rows.First().Select(f => f.Key)) + ") " 
+                                    + "(" + string.Join(',', data.Rows.First().Select(f => "\"" + f.Key + "\"")) + ") " 
                                     + "VALUES " + string.Join(',', rows);
                         
                         command.ExecuteNonQuery();
@@ -122,11 +122,11 @@ namespace PGManagerApi.Services
                         var fieldTypes = GetFieldTypes(username, connectionId, table);
 
                         command.CommandText = $"UPDATE \"{table.SchemaName}\".\"{table.TableName}\" SET ";
-                        command.CommandText += string.Join(',', update.Row.Select(f => $"{f.Key} = @{f.Key}"));
+                        command.CommandText += string.Join(',', update.Row.Select(f => $"\"{f.Key}\" = @{f.Key}"));
                         AddParameters(command, fieldTypes, update.Row);
 
                         command.CommandText += " WHERE ";
-                        command.CommandText += string.Join(" AND ", update.Where.Select(f => $"{f.Key} = @{f.Key}"));
+                        command.CommandText += string.Join(" AND ", update.Where.Select(f => $"\"{f.Key}\" = @{f.Key}"));
                         AddParameters(command, fieldTypes, update.Where);
 
                         command.ExecuteNonQuery();
@@ -161,7 +161,7 @@ namespace PGManagerApi.Services
                     try
                     {
                         command.CommandText = $"DELETE FROM \"{table.SchemaName}\".\"{table.TableName}\" WHERE ";
-                        command.CommandText += string.Join(" AND ", where.Select(f => $"{f.Key} = @{f.Key}"));
+                        command.CommandText += string.Join(" AND ", where.Select(f => $"\"{f.Key}\" = @{f.Key}"));
                         
                         var fieldTypes = GetFieldTypes(username, connectionId, table);
 
