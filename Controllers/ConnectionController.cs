@@ -53,5 +53,11 @@ namespace PGManagerApi.Controllers
             var username = this.HttpContext.User.Identity.Name;
             this.DatabaseConnectionService.DeleteConnection(username, id);
         }
+
+        [HttpPost("test")]
+        public bool TestConnection([FromBody] DatabaseConnection connection)
+        {
+            return this.DatabaseConnectionService.TestConnection(connection);
+        }
     }
 }

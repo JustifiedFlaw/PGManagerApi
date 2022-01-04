@@ -87,6 +87,16 @@ namespace PGManagerApi.Services
             }
         }
 
+        public bool TestConnection(DatabaseConnection connection)
+        {
+            var sessionFactory = CreateSessionFactory(connection);
+            using (var session = this.SessionFactory.OpenSession())
+            {
+                var firstTable = session.Query<Table>().FirstOrDefault();
+                return true;
+            }
+        }
+
         private ISessionFactory CreateSessionFactory(DatabaseConnection databaseConnection)
         {
             var nhConfiguration = Fluently.Configure();
