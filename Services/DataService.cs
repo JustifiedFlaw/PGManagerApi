@@ -81,7 +81,7 @@ namespace PGManagerApi.Services
                                 var type = fieldTypes[field.Key];
                                 command.Parameters.Add(new NpgsqlParameter(varName, type)
                                 {
-                                    Value = field.Value
+                                    Value = Parse(field.Value, type)
                                 });
                             }
 
