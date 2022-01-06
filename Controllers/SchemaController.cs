@@ -39,6 +39,27 @@ namespace PGManagerApi.Controllers
             return this.SchemaService.GetSchemas(username, connection);
         }
 
+        [HttpPost("schemas/{schemaName}")]
+        public void CreateSchema([FromRoute] int connection, [FromRoute] string schemaName)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            this.SchemaService.CreateSchema(username, connection, schemaName);
+        }
+
+        [HttpPut("schemas/{schemaName}")]
+        public void RenameSchema([FromRoute] int connection, [FromRoute] string schemaName, [FromQuery] string newName)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            this.SchemaService.RenameSchema(username, connection, schemaName, newName);
+        }
+
+        [HttpDelete("schemas/{schemaName}")]
+        public void DropSchema([FromRoute] int connection, [FromRoute] string schemaName)
+        {
+            var username = this.HttpContext.User.Identity.Name;
+            this.SchemaService.DropSchema(username, connection, schemaName);
+        }
+
         [HttpGet("tables")]
         public IEnumerable<Table> GetTables([FromRoute] int connection)
         {

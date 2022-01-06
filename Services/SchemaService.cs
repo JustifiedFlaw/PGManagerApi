@@ -45,7 +45,48 @@ namespace PGManagerApi.Services
             {
                  return session.Query<Schema>().ToArray();
             }
-        }        
+        }
+
+        public void CreateSchema(string username, int connectionId, string schemaName)
+        {
+            Validate.NoQuotes(schemaName, nameof(schemaName));
+
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                session.CreateSQLQuery($"CREATE SCHEMA \"{schemaName}\"")
+                    .ExecuteUpdate();
+            }
+        }
+
+        public void RenameSchema(string username, int connectionId, string schemaName, string newName)
+        {
+            Validate.NoQuotes(schemaName, nameof(schemaName));
+            Validate.NoQuotes(newName, nameof(newName));
+
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                session.CreateSQLQuery($"ALTER SCHEMA \"{schemaName}\" " +
+                                        $"RENAME TO \"{newName}\"")
+                    .ExecuteUpdate();
+            }
+        }
+
+        public void DropSchema(string username, int connectionId, string schemaName)
+        {
+            Validate.NoQuotes(schemaName, nameof(schemaName));
+
+            var sessionFactory = this.DatabaseConnectionService.GetSessionFactory(username, connectionId);
+
+            using (var session = sessionFactory.OpenSession())
+            {
+                session.CreateSQLQuery($"DROP SCHEMA \"{schemaName}\"")
+                    .ExecuteUpdate();
+            }
+        }
 
         public Table[] GetTables(string username, int connectionId)
         {
@@ -65,8 +106,6 @@ namespace PGManagerApi.Services
 
             using (var session = sessionFactory.OpenSession())
             {
-                // TODO: columns parameter
-
                 EnsureSchema(session, table.SchemaName);
 
                 session.CreateSQLQuery($"CREATE TABLE \"{table.SchemaName}\".\"{table.TableName}\" (id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY)")
