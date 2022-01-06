@@ -1,4 +1,9 @@
 # PGManager
+A web back-end api to manage Postgresql databases
+
+## Web Front-end
+[PGManager](https://github.com/JustifiedFlaw/PGManager)
+
 ## Required Storage Database
 Migrations will take care of creating the tables, but you will need an existing Postgresql database for storage of users and database connections.
 ### Storage Database Settings in launch.json
